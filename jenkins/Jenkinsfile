@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
     stages {
         stage('Build') {
             steps {
@@ -15,7 +10,7 @@ pipeline {
             when { branch "master" }
             steps {
                 sh '''
-					docker login -u motomohan -p Docker@1986!Jan2
+					docker login -u "motomohan" -p "Docker@1986!Jan2"
                     docker build --no-cache -t appimage .
                     docker tag appimage:latest motomohan/appimage:latest
                     docker push motomohan/appimage:latest
@@ -27,7 +22,7 @@ pipeline {
             when { branch "master" }
             steps {
                 sh '''
-					docker login -u motomohan -p Docker@1986!Jan2
+					docker login -u "motomohan" -p "Docker@1986!Jan2"
                     docker pull motomohan/appimage:latest
                     docker stop appimage
                     docker rm appimage
@@ -40,7 +35,7 @@ pipeline {
             when { buildingTag() }
             steps {
                 sh '''
-					docker login -u motomohan -p Docker@1986!Jan2
+					docker login -u "motomohan" -p "Docker@1986!Jan2"
                     docker build --no-cache -t appimage .
                     docker tag appimage:latest motomohan/appimage:${TAG_NAME}
                     docker push motomohan/person:${TAG_NAME}
