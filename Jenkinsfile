@@ -2,7 +2,7 @@ node {
 
    stage('Clone Repository') {
         // Get some code from a GitHub repository
-        git 'https://github.com/denisdbell/spring-petclinic.git'
+        git 'https://github.com/motomohan/spring-app.git'
     
    }
    stage('Build Maven Image') {
