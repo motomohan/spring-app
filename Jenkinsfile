@@ -1,53 +1,28 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
-    agent {label 'docker'} 
-    stages {
-        stage('Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
-            }
-        }
-        stage('Update Docker UAT image') {
-            when { branch "master" }
-            steps {
-                sh '''
-					docker login -u "motomohan" -p "Docker@1986!Jan2"
-                    docker build --no-cache -t appimage .
-                    docker tag appimage:latest motomohan/appimage:latest
-                    docker push motomohan/appimage:latest
-					docker rmi appimage:latest
-                	'''
-            }
-        }
-        stage('Update UAT container') {
-            when { branch "master" }
-            steps {
-                sh '''
-					docker login -u "motomohan" -p "Docker@1986!Jan2"
-                    docker pull motomohan/appimage:latest
-                    docker stop appimage
-                    docker rm appimage
-                    docker run -p 8000:9090 --name appimage -t -d motomohan/appimage
-                    docker rmi -f $(docker images -q --filter dangling=true)
-                '''
-            }
-        }
-        stage('Release Docker image') {
-            when { buildingTag() }
-            steps {
-                sh '''
-					docker login -u "motomohan" -p "Docker@1986!Jan2"
-                    docker build --no-cache -t appimage .
-                    docker tag appimage:latest motomohan/appimage:${TAG_NAME}
-                    docker push motomohan/person:${TAG_NAME}
-					docker rmi $(docker images -f “dangling=true” -q)
-               '''
-            }
-        }
-    }
+node {
+
+   stage('Clone Repository') {
+        // Get some code from a GitHub repository
+        git 'https://github.com/denisdbell/spring-petclinic.git'
+    
+   }
+   stage('Build Maven Image') {
+        docker.build("maven-build") 
+   }
+   stage('Run Maven Container') {
+       
+        //Remove maven-build-container if it exists
+        sh " docker rm -f maven-build-container"
+        
+        //Run maven image
+        sh "docker run --rm --name maven-build-container maven-build"
+   }
+   
+   stage('Deploy Spring Boot Application') {
+        
+         //Remove maven-build-container if it exists
+        sh " docker rm -f java-deploy-container"
+       
+        sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 denisdbell/petclinic-deploy"
+   }
+
 }
