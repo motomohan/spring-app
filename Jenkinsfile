@@ -8,10 +8,16 @@ node {
    stage('Build Maven Image') {
         docker.build("maven-build") 
    }
+   
    stage('Run Maven Container') {
-       
+       withEnv([
+	    "DOCKER_HOST=tcp://192.168.1.101:2375",
+  		])
         //Run maven image
-        sh "docker run --rm --name maven-build-container maven-build"
+        {
+   			 sh "docker run --rm --name maven-build-container maven-build"
+		}
+        
    }
    
    stage('Deploy Spring Boot Application') {
