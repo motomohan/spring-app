@@ -8,4 +8,4 @@ WORKDIR /deploy/application
 
 ADD . .
 
-ENTRYPOINT ["mvn","clean","-DskipTests","package"]
+ENTRYPOINT ["mvn","clean","package"]
