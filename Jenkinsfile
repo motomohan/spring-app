@@ -11,7 +11,7 @@ node {
    
    stage('Run Maven Container') {
        withEnv([
-	    "DOCKER_HOST=tcp://192.168.1.101:2375",
+	    "DOCKER_HOST=tcp://192.168.1.101:2376",
   		])
         //Run maven image
         {
