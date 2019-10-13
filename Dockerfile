@@ -1,11 +1,11 @@
-FROM maven:3.5-jdk-8
+#pull base image
+FROM openjdk:8-jdk-alpine
 
-RUN mkdir -p /deploy/application
+#expose port 8080
+EXPOSE 8080
 
-VOLUME ["/deploy/application"]
+#default command
+CMD java -jar /data/sample-0.0.1-SNAPSHOT.jar
 
-WORKDIR /deploy/application
-
-ADD . .
-
-ENTRYPOINT ["mvn","clean","-DskipTests","package"]
+#copy hello world to docker image
+ADD ./data/sample-0.0.1-SNAPSHOT.jar /data/sample-0.0.1-SNAPSHOT.jar
