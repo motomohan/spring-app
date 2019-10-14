@@ -11,11 +11,6 @@ pipeline {
         git 'https://github.com/motomohan/spring-app.git'
       }
     }
-    stage('Build') {
-         steps {
-             sh 'mvn -B -DskipTests clean package'
-        }
-    }
     stage('Building image') {
       steps{
         script {
