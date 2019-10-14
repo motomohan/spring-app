@@ -5,11 +5,17 @@ pipeline {
     dockerImage = ''
   }
   agent any
+ 
   stages {
     stage('Cloning Git') {
       steps {
         git 'https://github.com/motomohan/spring-app.git'
       }
+    }
+    stage('Build') {
+         steps {
+             sh 'mvn -B -DskipTests clean package'
+        }
     }
     stage('Building image') {
       steps{
