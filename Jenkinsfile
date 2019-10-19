@@ -11,6 +11,12 @@ pipeline {
         git 'https://github.com/motomohan/spring-app.git'
       }
     }
+    stage('Build Maven Image') {
+        docker.build("maven-build") 
+    }
+    stage('Run Maven Container') {
+        sh "docker run --rm --name maven-build-container maven-build"
+    }
     stage('Building image') {
       steps{
         script {
